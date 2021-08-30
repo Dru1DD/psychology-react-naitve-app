@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+// import { AsyncStorage } from '@react-native-async-storage/async-storage';
+import { AsyncStorage } from 'react-native'
 import { useDispatch } from "react-redux";
-import LOGIN_USER from '../components/redux/action/types'
+import { LOGIN_USER } from '../components/redux/action/types'
 //style
 import {
   View,
@@ -14,6 +16,7 @@ import {
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { useTheme } from "react-native-paper";
+
 
 //icons
 import { FontAwesome, Feather } from "react-native-vector-icons";
@@ -36,7 +39,8 @@ function SignIn({ navigation }) {
   const dispatch = useDispatch()
 
   const textInputChange = (e) => {
-    if (e.trim().length >= 4) {
+    const re = /\S+@\S+\.\S+/
+    if (re.test(e)) {
       setData({
         ...data,
         email: e,
@@ -80,41 +84,47 @@ function SignIn({ navigation }) {
     const result = await axios.post("https://agile-thicket-06723.herokuapp.com/login", {
       email,
       password,
-    }).catch(e => console.log(e));
-
-    if(result.message) {
-      console.log(result.message)
+    })
+    .catch(e => {
       Alert.alert(
         "Ошибка",
-        result.message,
+        "Проверьте правильность ввода данных",
         [
           {
-            text: "Ок",
-            onPress: () => navigatrion.navigate("SignIn")
+            text: "Хорошо",
+            onPress: () => navigation.navigate("SignIn")
           }
         ]
       )
-    } else {
-      setData({ ...data, userData: result.data})
-    dispatch({
-      type: LOGIN_USER,
-      payload: {
-        email: email,
-        countOfCreatedDiagrams: 0
-      }
     })
+
+    setData({ ...data, userData: result.data})
+    
+
     Alert.alert(
       "Вход",
       "Добро пожаловать",
       [
         {
           text: "Ok",
-          onPress: () => navigation.navigate("Profile"),
-          style: "cancel",
+          onPress: async () => {
+            dispatch({
+              type: LOGIN_USER,
+              payload: {
+                email,
+                username: result.data.username,
+                countOfDiagrams: 0
+              }
+            })
+            await AsyncStorage.setItem("USER_INFO",
+            JSON.stringify({
+              email: email,
+              password: password
+            }))
+            navigation.navigate("RootTabScreen")},
         },
       ],
     )
-    }
     
   };
 
@@ -167,7 +177,7 @@ function SignIn({ navigation }) {
         {data.isValidUser ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
-              Email must be 4 characters long.
+              Введите email верного формата
             </Text>
           </Animatable.View>
         )}

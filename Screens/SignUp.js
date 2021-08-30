@@ -26,11 +26,16 @@ import { REGISTER_USER } from '../components/redux/action/types'
 
 function SignUp({ navigation }) {
 
+    //Local State
     const [data, setData] = useState({
         username: '',
+        isValidUsername: true,
         email: '',
+        isValidEmail: true,
         password: '',
         confirm_password: '',
+        isValidPassword: true,
+        isValidConfirm: true,
         check_textInputChange: false,
         check_textInputChangeEmail: false,
         secureTextEntry: true,
@@ -39,51 +44,76 @@ function SignUp({ navigation }) {
 
     const dispatch = useDispatch()
 
+    //Change Local State
     const textInputChangeUsername = (val) => {
-        if( val.length !== 0 ) {
-            setData({
-                ...data,
-                username: val,
-                check_textInputChange: true
-            });
+            if(val.trim().length < 3) {
+                setData({
+                    ...data,
+                    username: val,
+                    check_textInputChange: true,
+                    isValidUsername: false
+                })
         } else {
             setData({
                 ...data,
                 username: val,
-                check_textInputChange: false
+                check_textInputChange: true,
+                isValidUsername: true
             });
         }
     }
 
     const textInputChangeEmail = (val) => {
-        if (val.length !== 0 ) {
+        const re = /\S+@\S+\.\S+/
+        if (re.test(val)) {
             setData({
                 ...data,
                 email: val,
-                check_textInputChangeEmail: true
+                check_textInputChangeEmail: true,
+                isValidEmail: true
             })
         } else {
             setData({
                 ...data,
                 email: val,
-                check_textInputChangeEmail: false
+                check_textInputChangeEmail: false,
+                isValidEmail: false
             })
         }
     }
 
     const handlePasswordChange = (val) => {
-        setData({
-            ...data,
-            password: val
-        });
+        if(val.trim().length < 8) {
+           setData({
+                ...data,
+                password: val,
+                isValidPassword: false
+            }); 
+        } else {
+            setData({
+                ...data,
+                password: val,
+                isValidPassword:  true
+            })
+        }
+        
     }
 
     const handleConfirmPasswordChange = (val) => {
+      if (val.trim() !== data.password) {
         setData({
-            ...data,
-            confirm_password: val
+          ...data,
+          confirm_password: val,
+          isValidConfirm: false,
         });
-    }
+      } else {
+          setData({
+              ...data,
+              confirm_password: val,
+              isValidConfirm: true
+          })
+      }
+    };
 
     const updateSecureTextEntry = () => {
         setData({
@@ -100,34 +130,43 @@ function SignUp({ navigation }) {
     }
 
     const register = ( email, username, password ) => {
-        const result = axios.post('https://agile-thicket-06723.herokuapp.com/registration', {
-            email,
-            username,
-            password
-        })
-
-        dispatch(
-            {
-                type: REGISTER_USER,
-                payload: {
-                    username: username,
-                    email: email,
-                    countOfDiagrams: 0
-                }
-            }
-        )
-
-        Alert.alert(
-            "Регистрация",
-            "Пользователь успешно создан",
-            [
-                {
-                  text: "Ok",
-                  onPress: () => navigation.navigate("Profile"),
-                  style: "cancel",
-                },
-              ],
-        )
+           const result = axios.post('https://agile-thicket-06723.herokuapp.com/registration', {
+           email,
+           username,
+           password
+           })
+           .catch(e => {
+               Alert.alert(
+                   "Ошибка",
+                   "Проверьте правильность введёных данных",
+                   [
+                       {
+                           text: "Ok",
+                           onPress: () => navigation.navigate("RootTabScreen")
+                       }
+                   ]
+               )
+           })
+           dispatch(
+               {
+                   type: REGISTER_USER,
+                   payload: {
+                       username: username,
+                       email: email
+                   }
+               }
+           )
+           Alert.alert(
+               "Регистрация",
+               "Пользователь успешно создан",
+               [
+                   {
+                     text: "Ok",
+                     onPress: () => navigation.navigate("RootTabScreen"),
+                     style: "cancel",
+                   },
+                 ],
+           )
     }
 
     return (
@@ -166,6 +205,15 @@ function SignUp({ navigation }) {
                 </Animatable.View>
                 : null}
             </View>
+            {
+                data.isValidUsername ? null : (
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                        <Text style={styles.errorMsg}>
+                            Имя должно быть длинее 3 символов
+                        </Text>
+                    </Animatable.View>
+                )
+            }
 
             <Text style={[styles.text_footer, {
                 marginTop: 35
@@ -194,6 +242,15 @@ function SignUp({ navigation }) {
                 </Animatable.View>
                 : null}
             </View>
+            {
+                data.isValidEmail ? null : (
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                        <Text style={styles.errorMsg}>
+                            Введите email верного формата
+                        </Text>
+                    </Animatable.View>
+                )
+            }
             <Text style={[styles.text_footer, {
                 marginTop: 35
             }]}>Пароль</Text>
@@ -227,8 +284,15 @@ function SignUp({ navigation }) {
                     />
                     }
                 </TouchableOpacity>
+                
             </View>
-
+                {data.isValidPassword ? null : (
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                        <Text style={styles.errorMsg}>
+                            Пароль должен быть больше 8 символов
+                        </Text>
+                    </Animatable.View>
+                )}
             <Text style={[styles.text_footer, {
                 marginTop: 35
             }]}>Подтвердите пароль</Text>
@@ -263,6 +327,15 @@ function SignUp({ navigation }) {
                     }
                 </TouchableOpacity>
             </View>
+            {
+                data.isValidConfirm ? null : (
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                        <Text style={styles.errorMsg}>
+                            Пароли не совпадают
+                        </Text>
+                    </Animatable.View>
+                )
+            }
             
             <View style={styles.button}>
                 <TouchableOpacity
@@ -349,5 +422,9 @@ const styles = StyleSheet.create({
     },
     color_textPrivate: {
         color: 'grey'
+    },
+    errorMsg: {
+        color: "#FF0000",
+        fontSize: 14
     }
   });

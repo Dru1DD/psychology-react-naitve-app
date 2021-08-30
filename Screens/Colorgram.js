@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { View, TouchableOpacity, StyleSheet, Text, Modal, Alert } from 'react-native'
-import Svg, { Path } from 'react-native-svg'
+import { View, TouchableOpacity, StyleSheet, Text, Modal, Alert, Dimensions } from 'react-native'
+import Svg, { Path, Circle } from 'react-native-svg'
 import { StatusBar } from 'expo-status-bar'
 import * as Animatable from 'react-native-animatable'
 
@@ -8,12 +8,15 @@ import ModalAddingProps  from '../components/ModalAddingProps'
 import { useTheme } from '@react-navigation/native'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { ADD_COLORGRAM } from '../components/redux/action/types'
+import { ADD_COLORGRAM, ADD_SEGMENT_CHARACTERISTICS } from '../components/redux/action/types'
+
+import axios from 'axios'
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#009387'
+        backgroundColor: '#009387',
+        minHeight: Math.round(Dimensions.get('window').height)
     },
     header: {
         flex: 1,
@@ -73,13 +76,34 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    buttonText: {
+        color: "#009387",
+        alignSelf: 'center'
+    },
+    circle: {
+        width: 150,
+        height: 150,
+        borderRadius: 150 / 2,
+        marginLeft: 100,
+        marginTop: 200 / 2
+    },
+    circleText: {
+        width: 90,
+        marginTop: 55,
+        marginLeft: 30,
+        transform: [{ rotate: '90deg'}],
+        color: "black"
     }
 })
 
-function Item() {
+function Cologram() {
+
+    //LocalState
     const [countParts, isCountParts] = useState(4)
     const [isModalVisible, setIsModalVisible] = useState(false)
-    // const [isChangable, setIsChangable] = useState(false)
+
+    // const [isMainSegmentField, setIsMainSegmentField] = useState(false)
 
     const { colors } = useTheme()
     const [activeSection, setActiveSection] = useState(0)
@@ -87,17 +111,13 @@ function Item() {
     
     // Redux useSelector & useDispatch
     const diagrams = useSelector(state => state.diagrams)
+    const email = useSelector(state => state.email)
     const dispatch = useDispatch()
 
-    function whichColorRender (index) {
-        if ( diagrams.length == 0 ) return 'grey'
-        else return diagrams[index].color
-    }
     function slice() {
         let slices = [];
-        const numberOfSlice = countParts;
-        for (let i = 0; i < numberOfSlice; i++) {
-            slices.push({ percent: 1 / numberOfSlice, color: "grey" });
+        for (let i = 0; i < countParts; i++) {
+            slices.push({ percent: 1 / countParts, color: "#808080 " });
         }
 
         let cumulativePercent = 0;
@@ -120,11 +140,22 @@ function Item() {
                 `A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY}`, // Arc
                 'L 0 0', // Line
             ].join(' ');
-            return <Path d={pathData} fill={whichColorRender(index)} key={pathData} onPress={() => { 
-                setIsModalVisible(true) 
-                setActiveSection(index)
-            }} 
-            style={{borderWidth: 1, borderColor: "black"}}
+            return <Path 
+                d={pathData} 
+                fill={diagrams.anotherSegments[index].color} 
+                key={(Math.random() + 1).toString(36).substring(7)} 
+                onPress={() => { 
+                    if (diagrams.anotherSegments[index].color === " " ) {
+                        setIsModalVisible(true) 
+                        setActiveSection(index)
+                        diagrams.anotherSegments[index + 1].color = "" 
+                    }
+                    if (diagrams.anotherSegments[index].color !== "#808080") {
+                        setIsModalVisible(true)
+                        setActiveSection(index)
+                        if (diagrams.anotherSegments[index + 1].color === "#808080") diagrams.anotherSegments[index + 1].color = "" 
+                    }
+                }} 
             />;
         });
         return arr;
@@ -133,10 +164,10 @@ function Item() {
     function confirmHandler() {
         let finishedSegments = countParts
         for ( let i = 0; i < countParts; i++ ) {
-            if (diagrams[i].catagory === "" &&
-                diagrams[i].problem === "" &&
-                diagrams[i].emotion === "" &&
-                diagrams[i].color === ""
+            if (diagrams.anotherSegments[i].catagory === "" &&
+                diagrams.anotherSegments[i].problem === "" &&
+                diagrams.anotherSegments[i].emotion === "" &&
+                diagrams.anotherSegments[i].color === ""
             ) {
                     finishedSegments--
                 }
@@ -148,12 +179,18 @@ function Item() {
                 [
                     {
                         text: "Oк",
-                        onPress: () => {
+                        onPress: async () => {
+                            await axios.post("https://agile-thicket-06723.herokuapp.com/diagrams", {
+                                email: email,
+                                mainSegment: diagrams.mainSegment,
+                                anotherSegments: diagrams.anotherSegments.splice(0, countParts)
+                            }).catch(e =>  console.log(e))
+
                             dispatch({
                                 type: ADD_COLORGRAM,
                                 payload: {
-                                    countOfParts: countParts,
-                                    diagrama: diagrams.splice(0, countParts)
+                                    mainSegment: diagrams.mainSegment,
+                                    anotherSegments: diagrams.anotherSegments.splice(0, countParts)
                                 }
                             })
                         }
@@ -167,15 +204,8 @@ function Item() {
                 "Не все сегменты цветограммы были заполнены"
             )
         }
-        // Для того, чтобы проверить весь кргу, нам нужно знать количество кусочков,
-        // Дальше проходимся по массиву diagrams, которая вмещает в себя все 16 частей круга
-        // Цикл продолжает до n числа( Это количество кусочков ). 
-        // 
-        //
-        //
     }
 
-    //   39 размер ноги
     return (
         <View style={styles.container}>
             <StatusBar style="auto" />
@@ -190,30 +220,43 @@ function Item() {
                 height="350"
                 width="350"
                 viewBox="-1 -1 2 2"
-                style={{ transform: [{ rotate: '-90deg' }] }}>
+                style={{ transform: [{ rotate: '-90deg' }], position: "relative"}}>
                     {slice()}
-            </Svg>  
-            
+                    <View style={[styles.circle, {
+                        backgroundColor: "#fff",
+                        zIndex: 100
+                        }]}
+                    >
+                        <Text style={styles.circleText}>Моё сегодняшнее "Я"</Text>
+                    </View>
+                </Svg> 
+               
             <View style={{ flexDirection: 'row', padding: 15 }}>
-                <TouchableOpacity onPress={() => {
-                    if(countParts >= 16) isCountParts(16)
-                    else isCountParts(countParts + 2)
-                }}>
-                    <Text style={[styles.button, {
+                <TouchableOpacity 
+                    style={[styles.button, {
                         borderColor: "#009387",
                         borderWidth: 1
-                    }]}>+</Text>
+                    }]}
+                    onPress={() => {
+                        if(countParts >= 16) isCountParts(16)
+                        else isCountParts(countParts + 2)
+                    }}
+                >
+                    <Text style={styles.buttonText}>+</Text>
                 </TouchableOpacity>
-                <Text style={{ width: 50, color: 'black', justifyContent: "center" }}>{countParts}</Text>
-                <TouchableOpacity onPress={() => {
-                    if(countParts <= 4) isCountParts(4)
-                    else isCountParts(countParts - 2)
-                }}>
-                    <Text style={[styles.button, {
+                <Text style={[styles.buttonText, { width: 50, textAlign: 'center'}]}>{countParts}</Text>
+                <TouchableOpacity 
+                    style={[styles.button, {
                         alignSelf:"center",
                         borderColor: "#009387",
                         borderWidth: 1
-                    }]}>-</Text>
+                    }]}
+                    onPress={() => {
+                        if(countParts <= 4) isCountParts(4)
+                        else isCountParts(countParts - 2)
+                    }}
+                >
+                    <Text style={styles.buttonText}>-</Text>
                 </TouchableOpacity>
             </View>
             <Modal
@@ -237,8 +280,6 @@ function Item() {
                     </View>
                 </View>
             </Modal>
-
-
                 <TouchableOpacity style={[styles.signIn, {
                     borderColor: "#009387",
                     borderWidth: 1,
@@ -256,5 +297,5 @@ function Item() {
     )
 }
 
-export default Item
+export default Cologram
 

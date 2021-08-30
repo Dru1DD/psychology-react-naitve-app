@@ -1,17 +1,28 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Button, TextInput, ScrollView } from 'react-native'
-import { List } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { View, Text, StyleSheet, Button, TextInput, ScrollView, SafeAreaView, Dimensions } from 'react-native'
+import { Collapse, CollapseHeader, CollapseBody } from 'accordion-collapse-react-native'
+
+import { v4 as uuidv4 } from 'uuid'
+
+import ColorPicker from './ColorPicker'
 
 //Styled Components
 import { Line, SubTitle } from './styled'
+
 //icons
 import { Ionicons } from '@expo/vector-icons';
-import { ADD_SEGMENT_CHARACTERISTICS } from './redux/action/types';
 
-//Redux action type
+//Redux 
+import { ADD_SEGMENT_CHARACTERISTICS } from './redux/action/types';
+import { useDispatch, useSelector } from 'react-redux';
+
+
 
 const styles = StyleSheet.create({
+    comments: {
+        width: '100%',
+        borderColor: 'red'
+    },
     header: {
         flexDirection: 'row',
         fontFamily: 'Roboto'
@@ -33,6 +44,17 @@ const styles = StyleSheet.create({
         shadowRadius: 1,
 
         elevation: 2,
+    },
+    collapseHeader: {
+        borderWidth: 1,
+        borderRadius: 5,
+        alignItems: 'center'
+    },
+    line: {
+        height: 1,
+        width: '100%',
+        backgroundColor: "#9CA3AF",
+        marginVertical: 10
     },
     emotionContainer: {
         flexDirection: 'row',
@@ -61,15 +83,17 @@ const styles = StyleSheet.create({
     }
 })
 
+const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainSegmentField }) => {
 
-const ModalAddingProps = ({ closeModal, activeSection, setActiveSection }) => {
-    const [activePage, setActivePage] = useState(0)
-    const [category, setCategory] = useState(null)
-    const [problem, setProblem] = useState(null)
-    const [emotion, setEmotion] = useState(null)
-    const [color, setColor] = useState(null)
-    
+    const diagrams = useSelector(state => state.diagrams)
+    const name = useSelector(state =>  state.username)
     const dispatch = useDispatch()
+
+    const [activePage, setActivePage] = useState(0)
+    const [catagory, setCatagory] = useState(diagrams.anotherSegments[activeSection].catagory)
+    const [problem, setProblem] = useState(diagrams.anotherSegments[activeSection].problem)
+    const [emotion, setEmotion] = useState(diagrams.anotherSegments[activeSection].emotion)
+    const [color, setColor] = useState(diagrams.anotherSegments[activeSection].color)
 
     const colors = [
         "#00FFFF",
@@ -194,20 +218,36 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection }) => {
     function pageHandler() {
         if (activePage === 0) {
             return (
-                <Text style={styles.textBox}  >
+                <>
+                    <View style={styles.comments}>
+                        <Text>{name}, пожалуйста, напишите ту сферу вашей жизни, которая вызывает наибольшее беспокойство. Далее введите наиболее близкую вам проблему из этой сферы, выберите её цвет и определите эмоцию, которую эту проблема заставляет переживать вас</Text>
+                    </View>
+                    <View style={styles.line}></View>
+                  <Text style={styles.textBox}  >
                     <View style={styles.action}>
                         <TextInput 
                         placeholder="Введите категорию"
                         style={styles.textInput}
                         autoCapitalize="none"
-                        onChangeText={(val) => setCategory(val)}
+                        onChangeText={(val) => setCatagory(val)}
                     />
                     </View>
-                </Text>
+                </Text>  
+                </>
+                
             )
         } else if (activePage === 1) {
              return (
-                <Text style={styles.textBox}  >
+                <>
+                    <View style={styles.comments}>
+                        <Text>{name}, введите наиболее близкую вам проблему, характерную для этой сферы жизни.
+                        Неторопитесь! Введите то, что действительно важно для вас
+                        </Text>
+                    </View>
+                    <View style={styles.line}></View>
+                    <Text style={[styles.textBox, {
+                        alignItems: 'center'
+                    }]}  >
                     <View style={styles.action}>
                         <TextInput 
                         placeholder="Введите проблему"
@@ -217,33 +257,97 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection }) => {
                     />
                     </View>
                 </Text>
+                </>
+                
             )
         } else if (activePage === 2) {
-            return emotions.map((item, index) => {
-                return (
-                <ScrollView>
-                    <List.Section key={index} title={item.title}>
-                          <List.Accordion>
-                            {item.items.map((elem, i) => (
-                                <List.Item style={styles.textBox} title={elem} key={i} onPress={() => {
-                                    setEmotion(elem)
-                                    setActivePage(activePage + 1)
-                                }}/>
-                            ))}
-                        </List.Accordion>  
-                    </List.Section>
-                    </ScrollView>
-                )
-            })
+            return <>
+                    <View style={styles.comments}>
+                        <Text>{name}, определите эмоцию, которую эту проблема переживать вас. Вспомните, что вы чувствуете, когда думаете об этой проблеме…</Text>
+                    </View>
+                    <View style={styles.line}></View>
+                    {
+                        emotions.map((elem, index) => {
+                            return (
+                                <Collapse key={index} style={{marginBottom: 10}}>
+                                    <CollapseHeader>
+                                        <View style={styles.collapseHeader}>
+                                            <Text>{elem.title}</Text>
+                                        </View>
+                                    </CollapseHeader>
+                                    <CollapseBody>
+                                        <SafeAreaView style={{height: 200}}>
+                                            <ScrollView>
+                                                {
+                                                    elem.items.map(item => (
+                                                        <>
+                                                            <Text 
+                                                                style={styles.textBox}
+                                                                key={() => Math.random().toString(32) + uuidv4()}
+                                                                onPress={() => {
+                                                                    setEmotion(item)
+                                                                    setActivePage(activePage + 1)
+                                                                }}
+                                                                >
+                                                                    {item}
+                                                                </Text>
+                                                        </>
+                                                    )) 
+                                                }
+                                            </ScrollView>
+                                        </SafeAreaView>
+                                    </CollapseBody>
+                                </Collapse>
+                            )
+                        })
+                    }
+                </>
         } else if (activePage === 3) {
-            return colors.map((item, index) => (
-                <Text style={[styles.textBox, {
-                    backgroundColor: item
-                }]} key={index} onPress={() => {
-                    setColor(item)
-                    setActivePage(activePage + 1)
-                }}></Text>
-            ))
+            return (
+                <>
+                    <View style={styles.comments}>
+                        <Text>{name}, У каждого человека своё понимание и представление о счастье. Что для вас счастье? Выберете пиктограмму, которая наиболее точно соответствует вашему представлению о счастье…</Text>
+                    </View>
+                    <View style={styles.line}></View>
+                    <Collapse style={{
+                        marginBottom: 10
+                    }}>
+                        <CollapseHeader>
+                            <View style={styles.collapseHeader}>
+                                <Text>Основные цвета</Text>
+                            </View>
+                        </CollapseHeader>
+                        <CollapseBody>
+                            {
+                                 colors.map((item, index) => (
+                                    <Text style={[styles.textBox, {
+                                            backgroundColor: item
+                                        }]} 
+                                        key={index} 
+                                        onPress={() => {
+                                            setColor(item)
+                                            setActivePage(activePage + 1)
+                                        }}
+                                    ></Text>
+                                ))
+                            }
+                        </CollapseBody>
+                    </Collapse>
+                    <Collapse style={{
+                        marginBottom: 10
+                    }}>
+                            <CollapseHeader>
+                                <View style={styles.collapseHeader}>
+                                    <Text>Кастомный цвет</Text>
+                                </View>
+                            </CollapseHeader>
+                            <CollapseBody>
+                                <ColorPicker />
+                            </CollapseBody>
+                    </Collapse>
+                </>
+               
+            )
         }
     }
 
@@ -251,7 +355,7 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection }) => {
         return (
             <View style={styles.lastPage}>
                 <SubTitle>Подтвердить</SubTitle>
-                <Text>Категория: {category}</Text>
+                <Text>Категория: {catagory}</Text>
                 <Text>Проблема: {problem}</Text>
                 <Text>Эмоция: {emotion}</Text>
                 <Text>Цвет: <Text style={{width: 50, backgroundColor: color}}></Text></Text>
@@ -288,7 +392,7 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection }) => {
                                     type: ADD_SEGMENT_CHARACTERISTICS,
                                     payload: {
                                         id: activeSection,
-                                        category: category,
+                                        catagory: catagory,
                                         problem: problem,
                                         emotion: emotion,
                                         color: color

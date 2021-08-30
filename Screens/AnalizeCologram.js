@@ -1,49 +1,33 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import * as Animatable from 'react-native-animatable'
-import Svg, { Path } from 'react-native-svg'
-import { List } from 'react-native-paper'
+// import Svg, { Path } from 'react-native-svg'
+import LottieView from 'lottie-react-native'
+import { Collapse, CollapseHeader, CollapseBody } from 'accordion-collapse-react-native'
+import { Line } from '../components/styled'
 
 import { useSelector } from 'react-redux'
 
+import axios from 'axios'
+
 const AnalizeColorgram = () => {
 
-    // const { colors } = useTheme()
+    const [ isModalOpen, setIsModalOpen ] = useState(null)
 
-    const listOfDiagrams = useSelector(state => state.listOfDiagrams)
-    
-    function slice(item) {
-        let slices = [];
-        const numberOfSlice = item.countOfParts;
-        for (let i = 0; i < numberOfSlice; i++) {
-            slices.push({ percent: 1 / numberOfSlice, color: "grey" });
-        }
+    const email = useSelector(state => state.email)
 
-        let cumulativePercent = 0;
+    useEffect(() => {
+        const _fecthindData = async () => {
+            const lists = await axios.get("https://agile-thicket-06723.herokuapp.com/diagram", {
+                email
+            }) .catch(e => console.log(e))
+        } 
 
-        function getCoordinatesForPercent(percent) {
-            const x = Math.cos(2 * Math.PI * percent);
-            const y = Math.sin(2 * Math.PI * percent);
-            return [x, y];
-        }
+        _fecthindData()
+    }, []) 
 
-        let arr = [];
-
-        arr = slices.map((slice, index) => {
-            const [startX, startY] = getCoordinatesForPercent(cumulativePercent);
-            cumulativePercent += slice.percent;
-            const [endX, endY] = getCoordinatesForPercent(cumulativePercent);
-            const largeArcFlag = slice.percent > 0.5 ? 1 : 0;
-            const pathData = [
-                `M ${startX} ${startY}`, // Move
-                `A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY}`, // Arc
-                'L 0 0', // Line
-            ].join(' ');
-            return <Path d={pathData} fill={item.diagrama[index].color} key={pathData} />;
-        });
-        return arr;
-    }
+    let listOfDiagrams = useSelector(state => state.listOfDiagrams)
 
     function isOppositeColor(colorHEX, secondColorHEX) {
         const r1 = parseInt(colorHEX.slice(1, 3), 16)
@@ -65,53 +49,131 @@ const AnalizeColorgram = () => {
         }
     }
 
+    function renderProblemSectors(item, index) {
+      let arr = [];
+      let lengthOfAnotherSegments = item.anotherSegments.length;
+      let anotherSegmentsOppositeSector = item.anotherSegments;
+      item.anotherSegments
+        .slice(0, lengthOfAnotherSegments / 2)
+        .map((elem, i) => {
+          let oppositeSector = i + lengthOfAnotherSegments / 2;
+          if (oppositeSector < lengthOfAnotherSegments) {
+            return;
+          }
+
+          console.log(anotherSegmentsOppositeSector[oppositeSector], " ", i);
+          let colors = isOppositeColor(
+            elem.color,
+            anotherSegmentsOppositeSector[oppositeSector].color
+          );
+
+          console.log(elem, " ", color )
+          if (colors === true ) {
+            //   console.log(anotherSegmentsOppositeSector[oppositeSector])
+            // [...anotherSegmentsOppositeSector[oppositeSector]]
+          }
+        });
+        console.log(arr)
+      return arr.map((list, count) => {
+          return (
+            <Text key={count}>
+              {list.catagory} и {anotherSegmentsOppositeSector[index].catagory}
+            </Text>
+          );
+        }
+      )
+    }
+
     return (
         <View style={styles.container}>
             <StatusBar />
             <View style={styles.header}></View>
-            <Animatable.View 
+            <Animatable.View
                 style={styles.footer}
                 animation="fadeInUpBig"
             >
-                {
-                    listOfDiagrams.length === 0 ?
-                     <Text style={styles.centeredView}>Не создано ни одной цветограмы</Text>
-                     : listOfDiagrams.map((item, index) => {
-                    return (
-                        <List.Section
-                            key={index}
-                            style={styles.accordion}
-                            title={`Цветограмм №${index + 1}`}    
-                        >
-                            <List.Accordion title="Проблемные сектора">
-                                {
-                                    item.diagrama.slice(0, item.diagrama.length / 2)
-                                    .map((elem, i) =>{
-                                        let arr = []
-                                        let oppositeSector = i + (item.countOfParts / 2)
-                                        let colors = isOppositeColor(elem.color, item.diagrama[oppositeSector].color)
-                                        if( colors ) arr.push(item.diagrama[oppositeSector])
-
-                                        return arr.map((list, count) => (
-                                            <List.Item key={count} title={list.emotion} />
-                                        ))
+                    <ScrollView style={{height: 500}}>
+                        {
+                             listOfDiagrams ?
+                                listOfDiagrams.length !== 0 ? 
+                                    listOfDiagrams.map((item, index) => {
+                                        return (
+                                            <View key={index} style={{marginBottom: 10}}>
+                                                <View>
+                                                    <Text>Цветограмм № {index + 1}</Text>
+                                                </View>
+                                                <Collapse>
+                                                    <CollapseHeader style={[{
+                                                            marginTop: 10,
+                                                            marginLeft: 'auto',
+                                                            marginRight: 'auto',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center'
+                                                        }, styles.collapseHeader]}>
+                                                            <View
+                                                                style={{
+                                                                    justifyContent: 'center'
+                                                                }}
+                                                            >
+                                                                <Text>Проблемные сектора</Text>
+                                                            </View>
+                                                    </CollapseHeader>
+                                                    <CollapseBody>
+                                                        {renderProblemSectors(item, index)}
+                                                    </CollapseBody>
+                                                </Collapse>
+                                                <Line />
+                                            </View>
+                                        )
                                     })
-                                }
-                            </List.Accordion>
-                            <List.Accordion title="Цветограм">
-                                {/* <List.Item title> */}
-                                    <Svg
-                                        height="350"
-                                        width="350"
-                                        viewBox="-1 -1 2 2"
-                                        style={{ transform: [{rotate: '-90deg'}]}}
-                                    >{slice(item)}</Svg>
-                                {/* </List.Item> */}
-                            </List.Accordion>
-                        </List.Section>
-                    )
-                })
-                }
+                                : <Text style={styles.centeredView}>Не создано ни одной цветограмы</Text>
+                            : null
+                            }
+                    </ScrollView>
+                    <TouchableOpacity style={[styles.loadAnim, {
+                        borderColor: "#009387",
+                        borderWidth: 1,
+                        marginTop: 15
+                    }]}
+                        onPress={() => setIsModalOpen(!isModalOpen)}
+                    >
+                        <Text style={[styles.textLoad, { color: "#009387"}]}>
+                            Загрузить цветокоректирующийся модуль
+                        </Text>
+                    </TouchableOpacity>
+                    {/* <TouchableOpacity style={[styles.loadAnim, {
+                        borderColor: "#009387",
+                        borderWidth: 1,
+                        marginTop: 15
+                    }]}
+                    onPress={() => console.log("Data was saved")}>
+                        <Text style={[styles.textLoad, { color: "#009387"}]}>
+                            Сохранить
+                        </Text>
+                    </TouchableOpacity> */}
+                    <Modal
+                        style={styles.centeredView}
+                        animationType="fade"
+                        transparent={true}
+                        visible={isModalOpen}
+                        onRequestClose={() => {
+                            setIsModalOpen(!isModalOpen)
+                        }}
+                    >
+                        <View style={styles.centeredView}>
+                            <View style={styles.modalView}>
+                            <LottieView
+                                source={require("../assets/73806-preloader-animation.json")}
+                                style={{
+                                    flex: 1,
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }}
+                                autoPlay
+                            />
+                            </View>
+                        </View>
+                    </Modal>
             </Animatable.View>
         </View>
     )
@@ -140,10 +202,49 @@ const styles = StyleSheet.create({
     centeredView: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        fontSize: 26
     },
     accordion: {
         width: '100%'
+    },
+    loadAnim: {
+        width: "100%",
+        height: 50,
+        justifyContent: 'center',
+        alignItems: "center",
+        borderRadius: 10
+    },
+    textLoad: {
+        fontSize: 18,
+        fontWeight: "bold"
+    },
+    modalView: {
+        margin: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    collapseHeader: {
+        borderWidth: 1,
+        borderRadius: 5,
+        alignItems: 'center'
     }
 })
 

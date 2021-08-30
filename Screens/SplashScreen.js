@@ -3,13 +3,11 @@ import {
     View,
     Text,
     TouchableOpacity,
-    Dimensions,
     StatusBar,
     StyleSheet
 } from 'react-native'
 import * as Animatable from 'react-native-animatable'
 import { useTheme } from '@react-navigation/native'
-import { MaterialIcons } from '@expo/vector-icons'
 
 const SplashScreen = ({ navigation }) => {
     const { colors } = useTheme()
@@ -27,7 +25,7 @@ const SplashScreen = ({ navigation }) => {
             <Text style={[styles.title, {
                 color: colors.text
             }]}>
-                Stay connected with everyone!
+                Экспресс-тест "Краски вашей жизни!"
             </Text>
             <Text style={styles.text}>Войдите в свой аккаунт</Text>
             <View style={styles.button}>
