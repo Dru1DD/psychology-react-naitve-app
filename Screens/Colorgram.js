@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, TouchableOpacity, StyleSheet, Text, Modal, Alert, Dimensions } from 'react-native'
-import Svg, { Path, Circle } from 'react-native-svg'
+import Svg, { Path, TextPath } from 'react-native-svg'
 import { StatusBar } from 'expo-status-bar'
 import * as Animatable from 'react-native-animatable'
 
@@ -8,9 +8,10 @@ import ModalAddingProps  from '../components/ModalAddingProps'
 import { useTheme } from '@react-navigation/native'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { ADD_COLORGRAM, ADD_SEGMENT_CHARACTERISTICS } from '../components/redux/action/types'
+import { ADD_COLORGRAM, LOAD_DEFAULT_DIAG } from '../components/redux/action/types'
 
 import axios from 'axios'
+import ModalMainSegment from '../components/ModalMainSegment'
 
 const styles = StyleSheet.create({
     container: {
@@ -82,17 +83,15 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     circle: {
-        width: 150,
-        height: 150,
+        width: 125,
+        height: 125,
+        bottom: -115,
         borderRadius: 150 / 2,
-        marginLeft: 100,
-        marginTop: 200 / 2
     },
     circleText: {
         width: 90,
-        marginTop: 55,
-        marginLeft: 30,
-        transform: [{ rotate: '90deg'}],
+        marginTop: 35,
+        marginLeft: 25,
         color: "black"
     }
 })
@@ -102,8 +101,7 @@ function Cologram() {
     //LocalState
     const [countParts, isCountParts] = useState(4)
     const [isModalVisible, setIsModalVisible] = useState(false)
-
-    // const [isMainSegmentField, setIsMainSegmentField] = useState(false)
+    const [isMainModalVisible, setIsMainModalVisible] = useState(false)
 
     const { colors } = useTheme()
     const [activeSection, setActiveSection] = useState(0)
@@ -112,19 +110,20 @@ function Cologram() {
     // Redux useSelector & useDispatch
     const diagrams = useSelector(state => state.diagrams)
     const email = useSelector(state => state.email)
+    const textColor = useSelector(state => state.textColor)
     const dispatch = useDispatch()
 
     function slice() {
         let slices = [];
         for (let i = 0; i < countParts; i++) {
-            slices.push({ percent: 1 / countParts, color: "#808080 " });
+            slices.push({ percent: 1 / countParts , color: "white" });
         }
 
         let cumulativePercent = 0;
 
         function getCoordinatesForPercent(percent) {
-            const x = Math.cos(2 * Math.PI * percent);
-            const y = Math.sin(2 * Math.PI * percent);
+            const x = Math.cos( 2 * Math.PI * percent);
+            const y = Math.sin( 2 * Math.PI * percent);
             return [x, y];
         }
 
@@ -140,23 +139,36 @@ function Cologram() {
                 `A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY}`, // Arc
                 'L 0 0', // Line
             ].join(' ');
-            return <Path 
-                d={pathData} 
-                fill={diagrams.anotherSegments[index].color} 
-                key={(Math.random() + 1).toString(36).substring(7)} 
-                onPress={() => { 
-                    if (diagrams.anotherSegments[index].color === " " ) {
-                        setIsModalVisible(true) 
-                        setActiveSection(index)
-                        diagrams.anotherSegments[index + 1].color = "" 
-                    }
-                    if (diagrams.anotherSegments[index].color !== "#808080") {
-                        setIsModalVisible(true)
-                        setActiveSection(index)
-                        if (diagrams.anotherSegments[index + 1].color === "#808080") diagrams.anotherSegments[index + 1].color = "" 
-                    }
-                }} 
-            />;
+            return (
+                <Text key={(Math.random() + 1).toString(36).substring(7)}>
+                    <Path
+                    d={pathData}
+                    id="path"
+                    fill={diagrams.anotherSegments[index].color}
+                    style={{
+                        margin: 10
+                    }}
+                    onPress={() => {
+                      if (diagrams.anotherSegments[index].color === " ") {
+                        setIsModalVisible(true);
+                        setActiveSection(index);
+                        diagrams.anotherSegments[index + 1].color = "";
+                      }
+                      if (diagrams.anotherSegments[index].color !== "#808080") {
+                        setIsModalVisible(true);
+                        setActiveSection(index);
+                        if (
+                          diagrams.anotherSegments[index + 1].color ===
+                          "#808080"
+                        )
+                          diagrams.anotherSegments[index + 1].color = "";
+                      }
+                    }}
+                  />
+                  <TextPath href="#path" fill="black">№ {index + 1}</TextPath>
+                </Text>
+                  
+            )
         });
         return arr;
     }
@@ -193,6 +205,9 @@ function Cologram() {
                                     anotherSegments: diagrams.anotherSegments.splice(0, countParts)
                                 }
                             })
+                            dispatch({
+                                type: LOAD_DEFAULT_DIAG
+                            })
                         }
                     }
                 ]
@@ -206,6 +221,10 @@ function Cologram() {
         }
     }
 
+    function whichColorRender () {
+        if (diagrams.mainSegment.color === "#ffffff") return "white"
+        else return diagrams.mainSegment.color
+    }
     return (
         <View style={styles.container}>
             <StatusBar style="auto" />
@@ -216,22 +235,37 @@ function Cologram() {
                 }]}
                 animation="fadeInUpBig"
             >
-                <Svg
-                height="350"
-                width="350"
-                viewBox="-1 -1 2 2"
-                style={{ transform: [{ rotate: '-90deg' }], position: "relative"}}>
-                    {slice()}
-                    <View style={[styles.circle, {
-                        backgroundColor: "#fff",
+                 <View style={[styles.circle, {
+                        backgroundColor: whichColorRender(),
                         zIndex: 100
                         }]}
                     >
-                        <Text style={styles.circleText}>Моё сегодняшнее "Я"</Text>
+                        <TouchableOpacity
+                        onPress={() => 
+                            // if ()
+                            setIsMainModalVisible(!isMainModalVisible)
+                        }
+                        >
+                            <Text style={[styles.circleText,{
+                                color: textColor
+                            }]}>Моё сегодняшнее "Я"</Text>
+                        </TouchableOpacity>
+                        
                     </View>
+                <Svg
+                height="300"
+                width="300"
+                viewBox="-1 -1 2 2"
+                style={{ 
+                    transform: [{ rotate: '-90deg' }],
+                    top: -100,
+                    position: "relative",
+                    backgroundColor: colors.background
+                }}>
+                        {slice()}
                 </Svg> 
                
-            <View style={{ flexDirection: 'row', padding: 15 }}>
+            <View style={{ flexDirection: 'row', padding: 15, top: -100}}>
                 <TouchableOpacity 
                     style={[styles.button, {
                         borderColor: "#009387",
@@ -249,7 +283,7 @@ function Cologram() {
                     style={[styles.button, {
                         alignSelf:"center",
                         borderColor: "#009387",
-                        borderWidth: 1
+                        borderWidth: 1,
                     }]}
                     onPress={() => {
                         if(countParts <= 4) isCountParts(4)
@@ -259,6 +293,22 @@ function Cologram() {
                     <Text style={styles.buttonText}>-</Text>
                 </TouchableOpacity>
             </View>
+            <Modal
+                style={styles.centeredView}
+                animationType="fade"
+                transparent={true}
+                visible={isMainModalVisible}
+                onRequestClose={() => setIsMainModalVisible(!isMainModalVisible)}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <ModalMainSegment 
+                            isModalOpen={isMainModalVisible} 
+                            setIsModalOpen={setIsMainModalVisible}  
+                        />
+                    </View>
+                </View>
+            </Modal>
             <Modal
                 style={styles.centeredView}
                 animationType="fade"
@@ -283,7 +333,8 @@ function Cologram() {
                 <TouchableOpacity style={[styles.signIn, {
                     borderColor: "#009387",
                     borderWidth: 1,
-                    marginTop: 15
+                    marginTop: 15,
+                    top: -100
                 }]}
                 onPress={() => confirmHandler()}
                 >

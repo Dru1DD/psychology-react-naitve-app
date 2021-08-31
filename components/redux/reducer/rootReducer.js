@@ -4,7 +4,10 @@ import {
     ADD_SEGMENT_CHARACTERISTICS, 
     ADD_COLORGRAM,
     USER_INFO_FROM_ASYNC_STORAGE,
-    ADD_CENTER_SEGMENT
+    ADD_CENTER_SEGMENT,
+    CHANGE_TEXT_COLOR,
+    CHANGE_FIRST_DIAG_SEGMENT,
+    LOAD_DEFAULT_DIAG
 } from "../action/types"
 
 let initialState = {
@@ -14,62 +17,13 @@ let initialState = {
     listOfDiagrams: [],
     diagrams: {
         mainSegment: {
-            color: ""
+            color: "#ffffff"
         },
         anotherSegments: [
             {
                 catagory: "",
                 problem: "",
                 emotion: "",
-                color: ""
-            },
-            {
-                catagory: "",
-                problem: "",
-                emotion: "",
-                color: "#808080"
-            },
-            {
-                catagory: "",
-                problem: "",
-                emotion: "",
-                color: "#808080"
-            },
-            {
-                catagory: "",
-                problem: "",
-                emotion: "",
-                color: "#808080"
-            },
-            {
-                catagory: "",
-                problem: "",
-                emotion: "",
-                color: "#808080"
-            },
-            {
-                catagory: "",
-                problem: "",
-                emotion: "",
-                color: "#808080"
-            },
-            {
-                catagory: "",
-                problem: "",
-                emotion: "",
-                color: "#808080"
-            },
-            {
-                catagory: "",
-                problem: "",
-                emotion: "",
-                color: "#808080"
-            },
-    
-            {
-                catagory: "",
-                problem: "",
-                emotion: "",
                 color: "#808080"
             },
             {
@@ -115,6 +69,36 @@ let initialState = {
                 color: "#808080"
             },
     
+            {
+                catagory: "",
+                problem: "",
+                emotion: "",
+                color: "#808080"
+            },
+            {
+                catagory: "",
+                problem: "",
+                emotion: "",
+                color: "#808080"
+            },
+            {
+                catagory: "",
+                problem: "",
+                emotion: "",
+                color: "#808080"
+            },
+            {
+                catagory: "",
+                problem: "",
+                emotion: "",
+                color: "#808080"
+            },
+            {
+                catagory: "",
+                problem: "",
+                emotion: "",
+                color: "#808080"
+            },
             {
                 catagory: "",
                 problem: "",
@@ -134,7 +118,8 @@ let initialState = {
                 color: "#808080"
             }
         ]
-    }
+    },
+    textColor: "black"
 }
 
 export const rootReducer = (state = initialState, action) => {
@@ -174,9 +159,11 @@ export const rootReducer = (state = initialState, action) => {
         case ADD_CENTER_SEGMENT: 
             return {
                 ...state, 
-                mainSegment: {
-                    ...mainSegment,
-                    color: action.payload.color
+                diagrams: {
+                    ...state.diagrams,
+                    mainSegment: {
+                        color: action.payload.mainSegment.color
+                    }
                 }
             }
         case ADD_COLORGRAM: 
@@ -187,6 +174,61 @@ export const rootReducer = (state = initialState, action) => {
                     anotherSegments: action.payload.anotherSegments
                 }]
             }
+        case CHANGE_TEXT_COLOR: 
+            return {
+                ...state,
+                textColor: action.payload.textColor
+            }
+        case CHANGE_FIRST_DIAG_SEGMENT:
+            let newDiagramsList = []
+            state.diagrams.anotherSegments.map((item, index) => {
+                const { catagory, problem, emotion, color } = item
+                if (index === 0) {
+                   newDiagramsList.push({
+                        catagory: action.payload.anotherSegments.catagory,
+                        problem: action.payload.anotherSegments.problem,
+                        emotion: action.payload.anotherSegments.emotion,
+                        color: action.payload.anotherSegments.color
+                   })
+                }
+                newDiagramsList.push({
+                    catagory: "",
+                    problem: "",
+                    emotion: "",
+                    color: "#808080"
+                })
+            })
+            return {
+                ...state,
+                diagrams: {
+                    mainSegment: {
+                        color: action.payload.color
+                    },
+                    anotherSegments: newDiagramsList
+                }
+            }
+        case LOAD_DEFAULT_DIAG:
+            let defaultDiagList = {
+                mainSegment: {
+                    color: "#ffffff"
+                },
+                anotherSegments: []
+            }
+
+            state.diagrams.anotherSegments.map((item) => {
+                const { catagory, problem, emotion, color } = item
+                defaultDiagList.anotherSegments.push({
+                    catagory: "",
+                    problem: "",
+                    emotion: "",
+                    color: "#808080"
+                })
+            })
+            return {
+                ...state,
+                diagrams: defaultDiagList
+            }
+
         default: return state
     }
 }

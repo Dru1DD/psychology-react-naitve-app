@@ -24,12 +24,12 @@ const Profile = ({ navigation }) => {
                         text: "Да",
                         onPress: async () => {
                             await AsyncStorage.removeItem('USER_INFO')
-                            DevSettings.reload()
+                            RNRestart.Restart()
                         }
                     },
                     {
                         text: "Нет",
-                        onPress: () => RNRestart.Restart()
+                        onPress: () => navigation.navigate("Профиль")
                     }
                 ]
             )

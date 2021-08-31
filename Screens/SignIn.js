@@ -108,6 +108,11 @@ function SignIn({ navigation }) {
         {
           text: "Ok",
           onPress: async () => {
+            await AsyncStorage.setItem("USER_INFO",
+            JSON.stringify({
+              email: email,
+              password: password
+            }))
             dispatch({
               type: LOGIN_USER,
               payload: {
@@ -116,11 +121,7 @@ function SignIn({ navigation }) {
                 countOfDiagrams: 0
               }
             })
-            await AsyncStorage.setItem("USER_INFO",
-            JSON.stringify({
-              email: email,
-              password: password
-            }))
+            
             navigation.navigate("RootTabScreen")},
         },
       ],
@@ -219,12 +220,14 @@ function SignIn({ navigation }) {
         {data.isValidPassword ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
-              Password must be 8 characters long.
+              Пароль должен иметь не менее 8 символов
             </Text>
           </Animatable.View>
         )}
 
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("PasswordChanger")}
+        >
           <Text style={{ color: "#009387", marginTop: 15 }}>
             Забыли пароль?
           </Text>

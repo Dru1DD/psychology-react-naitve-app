@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Button, TextInput, ScrollView, SafeAreaView, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, Button, TextInput, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
 import { Collapse, CollapseHeader, CollapseBody } from 'accordion-collapse-react-native'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -45,6 +45,10 @@ const styles = StyleSheet.create({
 
         elevation: 2,
     },
+    list: {
+        width: "100%",
+        marginTop: 10,
+    },
     collapseHeader: {
         borderWidth: 1,
         borderRadius: 5,
@@ -80,10 +84,14 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
         paddingBottom: 5
+    },
+    lastPage: {
+        justifyContent: "center",
+        alignItems: 'center'
     }
 })
 
-const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainSegmentField }) => {
+const ModalAddingProps = ({ closeModal, activeSection, setActiveSection }) => {
 
     const diagrams = useSelector(state => state.diagrams)
     const name = useSelector(state =>  state.username)
@@ -94,7 +102,7 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainS
     const [problem, setProblem] = useState(diagrams.anotherSegments[activeSection].problem)
     const [emotion, setEmotion] = useState(diagrams.anotherSegments[activeSection].emotion)
     const [color, setColor] = useState(diagrams.anotherSegments[activeSection].color)
-
+    const [shades, setShades] = useState([])
     const colors = [
         "#00FFFF",
         "#000000",
@@ -215,6 +223,24 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainS
         }
     ]
 
+    function generateColorShades (color) {
+        let r1 = parseInt(color.slice(1, 3), 16)
+        let g1 = parseInt(color.slice(3, 5), 16)
+        let b1 = parseInt(color.slice(5, 7), 16)
+    
+        let hash = []
+    
+        for (let i = 1; i < 11; i++) {
+            let newR = Math.round(r1  + (255 - r1) * (i / 11))
+            let newG = Math.round(g1 + (255 - g1) * (i / 11))
+            let newB = Math.round(b1 + (255 - b1) * ( i / 11))
+    
+            let newColor = "#" + newR.toString(16) + newG.toString(16) + newB.toString(16)
+            hash.push(newColor)
+        }
+        setShades(hash)
+    }
+
     function pageHandler() {
         if (activePage === 0) {
             return (
@@ -226,7 +252,7 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainS
                   <Text style={styles.textBox}  >
                     <View style={styles.action}>
                         <TextInput 
-                        placeholder="Введите категорию"
+                        placeholder="Введите категорию                                                "
                         style={styles.textInput}
                         autoCapitalize="none"
                         onChangeText={(val) => setCatagory(val)}
@@ -248,9 +274,9 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainS
                     <Text style={[styles.textBox, {
                         alignItems: 'center'
                     }]}  >
-                    <View style={styles.action}>
+                    <View style={styles.action} >
                         <TextInput 
-                        placeholder="Введите проблему"
+                        placeholder="Введите проблему                                                 "
                         style={styles.textInput}
                         autoCapitalize="none"
                         onChangeText={(val) => setProblem(val)}
@@ -326,6 +352,7 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainS
                                         key={index} 
                                         onPress={() => {
                                             setColor(item)
+                                            generateColorShades(item)
                                             setActivePage(activePage + 1)
                                         }}
                                     ></Text>
@@ -348,6 +375,46 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainS
                 </>
                
             )
+        } else if (activePage === 4 ) {
+            return (
+                <>
+                <View style={styles.comments}>
+                      <Text>
+                        {name}, теперь выберите оттенок этого цвета
+                      </Text>
+                    </View>
+                    <View style={styles.line}></View>
+                    <View style={styles.list}>
+                        {
+                            shades.map((item, index) => {
+                                return (
+                                    <View key={index} style={{
+                                        margin: 5,
+                                        flexDirection: "row"
+                                        }}>
+                                        <Text>{`${110 - parseInt((index + 1)+"0")}%`}</Text>
+                                        <Text
+                                          style={[
+                                            styles.textBox,
+                                            {
+                                                flex: 1,
+                                              backgroundColor: item,
+                                              margin: 5
+                                            },
+                                          ]}
+                                          key={index}
+                                          onPress={() => {
+                                              setColor(item)
+                                              setActivePage(activePage + 1)
+                                          }}
+                                        ></Text>
+                                    </View>
+                                )
+                            })
+                        }
+                    </View>
+                </>
+            )
         }
     }
 
@@ -358,7 +425,11 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainS
                 <Text>Категория: {catagory}</Text>
                 <Text>Проблема: {problem}</Text>
                 <Text>Эмоция: {emotion}</Text>
-                <Text>Цвет: <Text style={{width: 50, backgroundColor: color}}></Text></Text>
+                <View style={{flexDirection: "row"}}>
+                    <Text>Цвет: </Text> 
+                    <Text style={{ width: 75, backgroundColor: color, margin: 5}}/> 
+                </View>
+                           
             </View>
         )
     }
@@ -366,7 +437,7 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainS
     return (
         <View>
             {
-                activePage !== 4 ?
+                activePage !== 5 ?
                     <View style={styles.header}>
                         <Text style={activePage === 0 ? [styles.tag, styles.activeTag] : styles.tag}>Категория</Text>
                         <Ionicons name="arrow-forward" size={24} color="black" />
@@ -374,7 +445,7 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainS
                         <Ionicons name="arrow-forward" size={24} color="black" />
                         <Text style={activePage === 2 ? [styles.tag, styles.activeTag] : styles.tag}>Эмоция</Text>
                         <Ionicons name="arrow-forward" size={24} color="black" />
-                        <Text style={activePage === 3 ? [styles.tag, styles.activeTag] : styles.tag}>Цвет</Text>
+                        <Text style={activePage === 3 || activePage === 4 ? [styles.tag, styles.activeTag] : styles.tag}>Цвет</Text>
                     </View>
                     :
                     lastPageConfirm()
@@ -384,9 +455,37 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainS
             <View style={styles.mainContent}>
                 {pageHandler()}
                 {
-                    activePage === 4 ?
-                        <Button
-                            title="Подтвердить"
+                    activePage === 5 ?
+                    (
+                        <View style={{flexDirection: "row"}}>
+                            <TouchableOpacity
+                            style={{
+                                width: 150,
+                                height: 25,
+                                alignItems: 'center',
+                                marginLeft: 10,
+                                borderWidth: 1,
+                                borderColor: color,
+                                borderRadius: 5
+                            }}
+                            onPress={() => {
+                                setActivePage(0)
+                            }}
+                        >
+                            <View>
+                                    <Text>Изменить</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{
+                                width: 150,
+                                height: 25,
+                                alignItems: 'center',
+                                marginLeft: 20,
+                                borderWidth: 1,
+                                borderColor: color,
+                                borderRadius: 5
+                            }}
                             onPress={() => {
                                 dispatch({
                                     type: ADD_SEGMENT_CHARACTERISTICS,
@@ -401,7 +500,11 @@ const ModalAddingProps = ({ closeModal, activeSection, setActiveSection, isMainS
                                 closeModal(false)
                                 setActiveSection(null)
                             }}
-                        />
+                            >
+                                <Text>Подтвердить</Text>
+                            </TouchableOpacity> 
+                        </View>
+                    )
                         :
                         <Button
                             title="Далее"

@@ -52,36 +52,49 @@ const AnalizeColorgram = () => {
     function renderProblemSectors(item, index) {
       let arr = [];
       let lengthOfAnotherSegments = item.anotherSegments.length;
-      let anotherSegmentsOppositeSector = item.anotherSegments;
       item.anotherSegments
         .slice(0, lengthOfAnotherSegments / 2)
         .map((elem, i) => {
-          let oppositeSector = i + lengthOfAnotherSegments / 2;
-          if (oppositeSector < lengthOfAnotherSegments) {
-            return;
-          }
-
-          console.log(anotherSegmentsOppositeSector[oppositeSector], " ", i);
-          let colors = isOppositeColor(
-            elem.color,
-            anotherSegmentsOppositeSector[oppositeSector].color
-          );
-
-          console.log(elem, " ", color )
-          if (colors === true ) {
-            //   console.log(anotherSegmentsOppositeSector[oppositeSector])
-            // [...anotherSegmentsOppositeSector[oppositeSector]]
-          }
-        });
-        console.log(arr)
-      return arr.map((list, count) => {
-          return (
-            <Text key={count}>
-              {list.catagory} и {anotherSegmentsOppositeSector[index].catagory}
-            </Text>
-          );
+            let oppositeSector = i + lengthOfAnotherSegments / 2
+            if (oppositeSector > lengthOfAnotherSegments) {
+                return 
+            }
+            let colors = isOppositeColor(
+                elem.color,
+                item.anotherSegments[oppositeSector].color
+            )
+            if(colors) {
+                arr.push(item.anotherSegments[oppositeSector])
+            }
+        })
+        if(arr.length === 0) {
+            return (
+                <Text>
+                    Не было найдено проблемных секторов
+                </Text>
+            )
+        } else if ( arr.length !== 0) {
+            return arr.map((list, count) => {
+                return (
+                    <View key={count} style={{justifyContent: "center", alignItems: "center"}}>
+                        <View style={[styles.listItem, {
+                            flexDirection: "column",
+                        }]}>
+                            <Text>Категория: {list.catagory}</Text>
+                            <Text>Проблема: {list.problem}</Text>
+                            <Text>Эмоция: {list.emotion}</Text>
+                        </View>
+                        <View style={styles.listItem}>
+                            <Text>Категория: {item.anotherSegments[index].catagory}</Text>
+                            <Text>Проблема: {item.anotherSegments[index].problem}</Text>
+                            <Text>Эмоция: {item.anotherSegments[index].emotion}</Text>
+                        </View>
+                    </View>
+                    
+                    );
+                }
+            )
         }
-      )
     }
 
     return (
@@ -92,7 +105,7 @@ const AnalizeColorgram = () => {
                 style={styles.footer}
                 animation="fadeInUpBig"
             >
-                    <ScrollView style={{height: 500}}>
+                    <ScrollView style={{height: 500, width: "80%"}}>
                         {
                              listOfDiagrams ?
                                 listOfDiagrams.length !== 0 ? 
@@ -245,6 +258,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         alignItems: 'center'
+    },
+    listItem: {
+        margin: 5,
+        width: "80%",
+        fontFamily: "Roboto",
+        borderWidth: 0.5,
+        borderRadius: 5
     }
 })
 
