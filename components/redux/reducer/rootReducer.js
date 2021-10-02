@@ -17,7 +17,9 @@ let initialState = {
     listOfDiagrams: [],
     diagrams: {
         mainSegment: {
-            color: "#ffffff"
+            problem: "",
+            color: "#ffffff",
+            colorWithoutProblem: ""
         },
         anotherSegments: [
             {
@@ -145,16 +147,17 @@ export const rootReducer = (state = initialState, action) => {
                 // Список готовых цветограмм, список 
             }
         case ADD_SEGMENT_CHARACTERISTICS: 
-            return {
-                ...state,
-                anotherSegments: [...state.diagrams.anotherSegments, state.diagrams.anotherSegments.map((item, index) => {
+            let segment = state.diagrams.anotherSegments.map((item, index) => {
                     if (index === action.payload.id) {
                         item.catagory = action.payload.catagory
                         item.problem = action.payload.problem
                         item.emotion = action.payload.emotion
                         item.color = action.payload.color
                     }
-                }) ]
+                }) 
+            return {
+                ...state,
+                anotherSegments: [...state.diagrams.anotherSegments, segment]
             }
         case ADD_CENTER_SEGMENT: 
             return {
@@ -162,7 +165,9 @@ export const rootReducer = (state = initialState, action) => {
                 diagrams: {
                     ...state.diagrams,
                     mainSegment: {
-                        color: action.payload.mainSegment.color
+                        color: action.payload.mainSegment.color,
+                        problem: action.payload.mainSegment.problem,
+                        colorWithoutProblem: action.payload.mainSegment.colorWithoutProblem
                     }
                 }
             }
@@ -170,7 +175,11 @@ export const rootReducer = (state = initialState, action) => {
             return {
                 ...state,
                 listOfDiagrams: [...state.listOfDiagrams, {
-                    mainSegment: action.payload.mainSegment,
+                    mainSegment: {
+                        color: action.payload.mainSegment.color,
+                        problem: action.payload.mainSegment.problem,
+                        colorWithoutProblem: action.payload.mainSegment.colorWithoutProblem
+                    },
                     anotherSegments: action.payload.anotherSegments
                 }]
             }
@@ -182,7 +191,6 @@ export const rootReducer = (state = initialState, action) => {
         case CHANGE_FIRST_DIAG_SEGMENT:
             let newDiagramsList = []
             state.diagrams.anotherSegments.map((item, index) => {
-                const { catagory, problem, emotion, color } = item
                 if (index === 0) {
                    newDiagramsList.push({
                         catagory: action.payload.anotherSegments.catagory,
@@ -202,7 +210,9 @@ export const rootReducer = (state = initialState, action) => {
                 ...state,
                 diagrams: {
                     mainSegment: {
-                        color: action.payload.color
+                        color: action.payload.color,
+                        problem: action.payload.problem,
+                        colorWithoutProblem: action.payload.colorWithoutProblem
                     },
                     anotherSegments: newDiagramsList
                 }
@@ -210,13 +220,13 @@ export const rootReducer = (state = initialState, action) => {
         case LOAD_DEFAULT_DIAG:
             let defaultDiagList = {
                 mainSegment: {
-                    color: "#ffffff"
+                    color: "#ffffff",
+                    problem: ""
                 },
                 anotherSegments: []
             }
 
             state.diagrams.anotherSegments.map((item) => {
-                const { catagory, problem, emotion, color } = item
                 defaultDiagList.anotherSegments.push({
                     catagory: "",
                     problem: "",

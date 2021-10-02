@@ -1,221 +1,135 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native'
+import React, { useEffect } from 'react'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import * as Animatable from 'react-native-animatable'
-// import Svg, { Path } from 'react-native-svg'
-import LottieView from 'lottie-react-native'
-import { Collapse, CollapseHeader, CollapseBody } from 'accordion-collapse-react-native'
-import { Line } from '../components/styled'
-
 import { useSelector } from 'react-redux'
 
-import axios from 'axios'
 
-const AnalizeColorgram = () => {
-
-    const [ isModalOpen, setIsModalOpen ] = useState(null)
-
-    const email = useSelector(state => state.email)
-
-    useEffect(() => {
-        const _fecthindData = async () => {
-            const lists = await axios.get("https://agile-thicket-06723.herokuapp.com/diagram", {
-                email
-            }) .catch(e => console.log(e))
-        } 
-
-        _fecthindData()
-    }, []) 
+const AnalizeColorgram = ({ navigation }) => {
 
     let listOfDiagrams = useSelector(state => state.listOfDiagrams)
+    console.log(listOfDiagrams)
 
-    function isOppositeColor(colorHEX, secondColorHEX) {
-        const r1 = parseInt(colorHEX.slice(1, 3), 16)
-        const g1 = parseInt(colorHEX.slice(3, 5), 16)
-        const b1 = parseInt(colorHEX.slice(5, 7), 16)
-        
-        const r2 = parseInt(secondColorHEX.slice(1, 3), 16)
-        const g2 = parseInt(secondColorHEX.slice(3, 5), 16)
-        const b2 = parseInt(secondColorHEX.slice(5, 7), 16)
-    
-        const r = Math.abs(255 - r1 - r2)
-        const g = Math.abs(255 - g1 - g2)
-        const b = Math.abs(255 - b1 - b2)
-    
-        if (r < 128 && g < 128 && b < 128) {
-            return true
-        } else {
-            return false
-        }
-    }
-
-    function renderProblemSectors(item, index) {
-      let arr = [];
-      let lengthOfAnotherSegments = item.anotherSegments.length;
-      item.anotherSegments
-        .slice(0, lengthOfAnotherSegments / 2)
-        .map((elem, i) => {
-            let oppositeSector = i + lengthOfAnotherSegments / 2
-            if (oppositeSector > lengthOfAnotherSegments) {
-                return 
-            }
-            let colors = isOppositeColor(
-                elem.color,
-                item.anotherSegments[oppositeSector].color
-            )
-            if(colors) {
-                arr.push(item.anotherSegments[oppositeSector])
-            }
-        })
-        if(arr.length === 0) {
-            return (
-                <Text>
-                    Не было найдено проблемных секторов
-                </Text>
-            )
-        } else if ( arr.length !== 0) {
-            return arr.map((list, count) => {
-                return (
-                    <View key={count} style={{justifyContent: "center", alignItems: "center"}}>
-                        <View style={[styles.listItem, {
-                            flexDirection: "column",
-                        }]}>
-                            <Text>Категория: {list.catagory}</Text>
-                            <Text>Проблема: {list.problem}</Text>
-                            <Text>Эмоция: {list.emotion}</Text>
-                        </View>
-                        <View style={styles.listItem}>
-                            <Text>Категория: {item.anotherSegments[index].catagory}</Text>
-                            <Text>Проблема: {item.anotherSegments[index].problem}</Text>
-                            <Text>Эмоция: {item.anotherSegments[index].emotion}</Text>
-                        </View>
-                    </View>
-                    
-                    );
-                }
-            )
-        }
-    }
-
+    // Тут чистая вёрстка, без особого функционала
     return (
-        <View style={styles.container}>
-            <StatusBar />
-            <View style={styles.header}></View>
-            <Animatable.View
-                style={styles.footer}
-                animation="fadeInUpBig"
-            >
-                    <ScrollView style={{height: 500, width: "80%"}}>
-                        {
-                             listOfDiagrams ?
-                                listOfDiagrams.length !== 0 ? 
-                                    listOfDiagrams.map((item, index) => {
-                                        return (
-                                            <View key={index} style={{marginBottom: 10}}>
-                                                <View>
-                                                    <Text>Цветограмм № {index + 1}</Text>
-                                                </View>
-                                                <Collapse>
-                                                    <CollapseHeader style={[{
-                                                            marginTop: 10,
-                                                            marginLeft: 'auto',
-                                                            marginRight: 'auto',
-                                                            justifyContent: 'center',
-                                                            alignItems: 'center'
-                                                        }, styles.collapseHeader]}>
-                                                            <View
-                                                                style={{
-                                                                    justifyContent: 'center'
-                                                                }}
-                                                            >
-                                                                <Text>Проблемные сектора</Text>
-                                                            </View>
-                                                    </CollapseHeader>
-                                                    <CollapseBody>
-                                                        {renderProblemSectors(item, index)}
-                                                    </CollapseBody>
-                                                </Collapse>
-                                                <Line />
-                                            </View>
-                                        )
-                                    })
-                                : <Text style={styles.centeredView}>Не создано ни одной цветограмы</Text>
-                            : null
-                            }
-                    </ScrollView>
-                    <TouchableOpacity style={[styles.loadAnim, {
-                        borderColor: "#009387",
-                        borderWidth: 1,
-                        marginTop: 15
-                    }]}
-                        onPress={() => setIsModalOpen(!isModalOpen)}
-                    >
-                        <Text style={[styles.textLoad, { color: "#009387"}]}>
-                            Загрузить цветокоректирующийся модуль
+      <View style={styles.container}>
+        <StatusBar />
+        <Animatable.View style={styles.footer} animation="fadeInUpBig">
+        <Text style={styles.title}>Ваши диаграммы</Text>
+        <View  style={{marginTop: 20, height: 500, width: "90%"}}>
+           <ScrollView>
+            {listOfDiagrams ? (
+              listOfDiagrams.length !== 0 ? (
+                listOfDiagrams.map((item, index) => {
+                  return (
+                    <View key={index} style={styles.item}>
+                      <View
+                        style={[
+                          styles.itemColor,
+                          { backgroundColor: item.mainSegment.color },
+                        ]}
+                      />
+                      <View style={styles.itemTextBox}>
+                        <Text style={styles.itemTitle}>
+                        Цветограмм "
+                          {item.mainSegment.problem
+                            ? item.mainSegment.problem
+                            : null}
+                          "
                         </Text>
-                    </TouchableOpacity>
-                    {/* <TouchableOpacity style={[styles.loadAnim, {
-                        borderColor: "#009387",
-                        borderWidth: 1,
-                        marginTop: 15
-                    }]}
-                    onPress={() => console.log("Data was saved")}>
-                        <Text style={[styles.textLoad, { color: "#009387"}]}>
-                            Сохранить
-                        </Text>
-                    </TouchableOpacity> */}
-                    <Modal
-                        style={styles.centeredView}
-                        animationType="fade"
-                        transparent={true}
-                        visible={isModalOpen}
-                        onRequestClose={() => {
-                            setIsModalOpen(!isModalOpen)
-                        }}
-                    >
-                        <View style={styles.centeredView}>
-                            <View style={styles.modalView}>
-                            <LottieView
-                                source={require("../assets/73806-preloader-animation.json")}
-                                style={{
-                                    flex: 1,
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}
-                                autoPlay
-                            />
-                            </View>
-                        </View>
-                    </Modal>
-            </Animatable.View>
+                        <TouchableOpacity
+                          style={{}}
+                          onPress={() =>{
+                            console.log(item)
+                            navigation.navigate("CologGramInfo", {
+                              detailOfDeagrams: item,
+                            })
+                          }
+                        }
+                        >
+                          <Text style={styles.itemText}>
+                            Посмотреть детальную информацию
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  );
+                })
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Image source={require("../assets/illustration.png")} />
+                  <Text style={styles.centeredView}>
+                    Не создано ни одной цветограмы
+                  </Text>
+                  <TouchableOpacity
+                      style={styles.button}
+                    onPress={() => navigation.navigate('Цветограм')}
+                  >
+                    <Text style={styles.buttonText}>Создать цветограмму</Text>
+                  </TouchableOpacity>
+                </View>
+              )
+            ) : null}
+          </ScrollView>
+ 
         </View>
-    )
+          
+          <View
+            style={{
+              flexDirection: "column",
+              marginTop: "auto",
+              justifyContent: "flex-end",
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "flex-end",
+              }}
+            >
+              <Image source={require("../assets/favicon_1_mini.png")} />
+              <Text
+                style={[styles.logoText, { fontFamily: "Gordita-Regular" }]}
+              >
+                vipdoctor.life
+              </Text>
+            </View>
+            <View style={styles.line} />
+          </View>
+        </Animatable.View>
+      </View>
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#009387"
-    },
-    header: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: 'center'
     },
     footer: {
         flex: 2,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#fff',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
         paddingVertical: 50,
         paddingHorizontal: 30
     },
+    title: {
+        width: 232,
+        height: 33,
+        fontStyle: 'normal',
+        fontWeight: "500",
+        fontSize: 24,
+        lineHeight: 33,
+        textAlign: "center"
+    },
     centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        textAlign:"center",
         fontSize: 26
     },
     accordion: {
@@ -249,11 +163,6 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5
     },
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
-    },
     collapseHeader: {
         borderWidth: 1,
         borderRadius: 5,
@@ -265,6 +174,69 @@ const styles = StyleSheet.create({
         fontFamily: "Roboto",
         borderWidth: 0.5,
         borderRadius: 5
+    },
+    logoText: {
+        width: 100,
+        height: 15,
+        fontWeight: "normal",
+        fontStyle: "normal",
+        fontSize: 15,
+        lineHeight: 15,
+        color: "#000000"
+    },
+    line: {
+        width: 105,
+        borderWidth: 0.25,
+        borderColor: "#000000"
+    },
+    item: {
+        width: 290,
+        height: 92,
+        borderRadius: 10,
+        flexDirection: "row",
+    },
+    itemTextBox: {
+        marginLeft: 5,
+        flexDirection: 'column',
+        justifyContent: "space-between"
+    },
+    itemTitle: {
+        width: "100%",
+        marginTop: 15,
+        textAlign: "center",
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: 16,
+        lineHeight: 17
+    },
+    itemColor: {
+        width: 61,
+        height: 73,
+        marginLeft: 13,
+        marginTop: 8,
+        borderRadius: 14
+    },
+    itemText: {
+        width: 159,
+        marginBottom: 15
+    },
+    button: {
+      width: "100%",
+      marginTop: 10,
+      height: 50,
+      backgroundColor: "red",
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: 10
+    },
+    buttonText: {
+      width: 278,
+      height: "100%",
+      fontSize: 16,
+      lineHeight: 19,
+      textAlign: "center",
+      textAlignVertical: "center",
+      color: "white"
     }
 })
 

@@ -31,6 +31,7 @@ const RootStackScreen = ({ navigation }) => {
     // Dispatch
     const dispatch = useDispatch()
 
+    // Функция отвечает за получения данных от сервера
     useEffect(() => {
       const _storeData = async () => {
         setTimeout(async () => {
@@ -55,25 +56,22 @@ const RootStackScreen = ({ navigation }) => {
               const userListOfDiagrams = await axios
                 .get("https://agile-thicket-06723.herokuapp.com/diagrams")
                 .catch((e) => console.log(e));
-
-              userListOfDiagrams.data.map((item) => {
-                if (item.email === JSON.parse(result).email) {
-                  userData.listOfDiagrams = item;
-                }
-              });
-
-              if (userListOfDiagrams.data !== []) {
-                userData.listOfDiagrams.diagrams.map((item) => {
-                  dispatch({
-                    type: ADD_COLORGRAM,
-                    payload: {
-                      mainSegment: item.mainSegment,
-                      anotherSegments: item.anotherSegments,
-                    },
-                  });
+                userListOfDiagrams.data.map((item) => {
+                  if (item.email === JSON.parse(result).email) {
+                    userData.listOfDiagrams = item;
+                  }
                 });
-              }
-
+                if (userData.listOfDiagrams.length !== 0) {
+                  userData.listOfDiagrams.diagrams.map((item) => {
+                    dispatch({
+                      type: ADD_COLORGRAM,
+                      payload: {
+                        mainSegment: item.mainSegment,
+                        anotherSegments: item.anotherSegments,
+                      },
+                    });
+                  });
+                }
               dispatch({
                 type: USER_INFO_FROM_ASYNC_STORAGE,
                 payload: {
@@ -87,7 +85,7 @@ const RootStackScreen = ({ navigation }) => {
             console.log(e);
           }
           setIsLoading(!isLoading);
-        }, 5000);
+        }, 3000);
       };
       _storeData();
     }, []); 

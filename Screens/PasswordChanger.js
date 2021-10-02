@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Platform, AsyncStorage } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Platform, AsyncStorage, Image } from 'react-native'
 import * as Animatable from 'react-native-animatable'
 import { useTheme } from 'react-native-paper'
 import { FontAwesome, Feather } from '@expo/vector-icons'
+import * as Fonts from 'expo-font'
 
 import axios from 'axios'
 
@@ -21,7 +22,18 @@ const PasswordChanger = ({ navigation }) => {
     })
 
     const { colors } = useTheme()
+    const loadFontsAsync = async () => {
+        await Fonts.loadAsync({
+            "Gordita-Regular": require("../assets/fonts/Gordita-Regular.ttf")
+        })
+    }
 
+    // Проблема со шрифтами
+    useEffect(() => {
+        loadFontsAsync()
+    }, [])
+
+// Стандартные функции для проверки инпутов
     const textInputChange = (e) => { 
         const re = /\S+@\S+\.\S+/
         if (re.test(e)) {
@@ -66,6 +78,7 @@ const PasswordChanger = ({ navigation }) => {
         })
     }
 
+    // Уже идёт запрос на сервер
     const passwordRecovery = async () => {
         try {
             const passStatus = await axios.post("https://agile-thicket-06723.herokuapp.com/password", {
@@ -88,8 +101,14 @@ const PasswordChanger = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <StatusBar />
-            <View style={styles.header}>
-                <Text style={styles.text_header}>Восстановление пароля</Text>
+            <View style={[styles.header, {
+                flexDirection: "row",
+                backgroundColor: colors.background
+            }]}>
+                  <Image 
+                    source={require("../assets/favicon_1.png")}
+                />
+                <Text style={styles.headerTitle}>Фёдор Милых</Text>  
             </View>
             <Animatable.View
                 animation="fadeInUpBig"
@@ -100,8 +119,15 @@ const PasswordChanger = ({ navigation }) => {
                     }
                 ]}
             >
+                <Text style={[
+                    styles.title, {
+                        fontFamily: "Gordita-Regular"
+                    }]}
+                >Восстановление пароля</Text>
                 <Text style={[styles.text_footer, {
-                    color: colors.text
+                    color: colors.text,
+                    marginTop: 20,
+                    fontFamily: 'Gordita-Regular'
                 }]}>Email</Text>
                 <View style={styles.action}>
                     <FontAwesome name="user-o" color={colors.text} size={20} />
@@ -141,7 +167,8 @@ const PasswordChanger = ({ navigation }) => {
                         styles.text_footer,
                         {
                             color: colors.text,
-                            marginTop: 35
+                            marginTop: 35,
+                            fontFamily: 'Gordita-Regular'
                         }
                     ]}
                 >
@@ -188,7 +215,8 @@ const PasswordChanger = ({ navigation }) => {
                         styles.text_footer,
                         {
                             color: colors.text,
-                            marginTop: 35
+                            marginTop: 35,
+                            fontFamily: 'Gordita-Regular'
                         }
                     ]}
                 >
@@ -230,25 +258,12 @@ const PasswordChanger = ({ navigation }) => {
                         </Animatable.View>
                     )
                 }
-                <View style={styles.button}>
+                <View style={[styles.styledButton, {alignSelf: "center"}]}>
                     <TouchableOpacity
                     onPress={() => passwordRecovery()}
-                    style={[
-                        styles.rewritePas,
-                        {
-                            borderColor: "#009387",
-                            borderWidth: 1,
-                            marginTop: 15
-                        }
-                    ]}
                 >
                     <Text
-                        style={[
-                            styles.textSign,
-                            {
-                                color: "#009387"
-                            }
-                        ]}
+                        style={styles.buttonText}
                     >
                         Восстановить пароль
                     </Text>
@@ -262,20 +277,19 @@ const PasswordChanger = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: "#009387"
+        flex: 1
     },
     header: {
         flex: 1,
-        justifyContent: "flex-end",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "white",
         paddingHorizontal: 20,
         paddingBottom: 50
     },
     footer: {
         flex: 3,
         backgroundColor: "#fff",
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
         paddingHorizontal: 20,
         paddingVertical: 30
     },
@@ -326,7 +340,51 @@ const styles = StyleSheet.create({
     textSign: {
         fontSize: 18,
         fontWeight: "bold"
-    }
+    },
+    headerTitle: {
+        width: 150,
+        height: 75,
+        fontFamily: "Roboto",
+        fontStyle: "normal",
+        fontWeight: "normal",
+        fontSize: 40,
+        lineHeight: 38,
+        textAlign: "center",
+        color: "#000000",
+      },
+    title: {
+        width: "100%",
+        height: 33,
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: 24,
+        lineHeight: 33,
+        color: "#000000",
+        textAlign: "center"
+      },
+      styledButton: {
+        width: "80%",
+        height: 59,
+        marginTop: 20,
+        backgroundColor: "red",
+        textAlign: "center",
+        justifyContent: "center",
+        alignItems: "center",
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+      },
+      buttonText: {
+        width: "100%",
+        height: 23,
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: 20,
+        lineHeight: 23,
+        textAlign: "center",
+        color: "#ffffff",
+      },
 })
 
 export default PasswordChanger

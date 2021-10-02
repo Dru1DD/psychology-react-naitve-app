@@ -1,0 +1,167 @@
+{
+    "appName": "",
+    "logoText": "",
+    "navigation": {
+        "mainScreen": "",
+        "cologram": "",
+        "analiza": "",
+        "profile": ""
+    },
+    "splashScreen": {
+        "title": "",
+        "subTitle": "",
+        "start": ""
+    },
+    "signIn": {
+        "title": "",
+        "firstPlaceholder": "",
+        "firstErrorMessage": "",
+        "secondLabel": "",
+        "secondPlaceholder": "",
+        "secondErrorMessage": "",
+        "forgotPassword": "",
+        "buttonText": "",
+        "downText": "",
+        "register": "",
+        "alertError": "",
+        "alertErrorText": "",
+        "alertErrorButtonText": "",
+        "alertSuccess": "",
+        "alertSuccessText": "",
+        "alertSuccessButtonText": ""
+    },
+    "signUp": {
+        "title": "",
+        "firstLabel": "",
+        "firstPlaceholder": "",
+        "firstErrorMessage": "",
+        "secondLabel": "",
+        "secondPlaceholder": "",
+        "secondErrorMessage": "",
+        "thirdLabel": "",
+        "thirdPlaceholder": "",
+        "thirdErrorMessage": "",
+        "fourthLabel": "",
+        "fourthPlaceholder": "",
+        "fourthErrorMessage": "",
+        "buttonText": "",
+        "downText": "",
+        "signIn": "",
+        "alertError": "",
+        "alertErrorText": "",
+        "alertErrorButtonText": "",
+        "alertSuccess": "",
+        "alertSuccessText": "",
+        "alertSuccessButttonText": ""
+    },
+    "passwordChanger": {
+        "title": "",
+        "firstLabel": "",
+        "firstPlaceholder": "",
+        "firstErrorMessage": "",
+        "secondLabel": "",
+        "secondPlaceholder": "",
+        "secondErrorMessage": "",
+        "thirdLabel": "",
+        "thirdErrorMessage": "",
+        "thirdPlaceholder": "",
+        "buttonText": ""
+    },
+    "mainScreen": {
+        "mainText": "",
+        "firstParagraph": "",
+        "firstButtonText": "",
+        "secondButtonText": "",
+        "secondParagraph": "",
+        "thirdParagraph": "",
+        "foursParagraph": "",
+        "textBeforeAlert": "",
+        "boldTextBeforeAlert": "",
+        "alertText": "Това приложение ви позволява да прехвърлите безплатно данните от психологическия си одит в невропсихологическата експертна система \"Цветовете на моя живот\" и да закупите едномесечен курс за цветна корекция, който да преглеждате на мобилното си устройство.       ",
+        "lastWords": ""
+    },
+    "colorgram": {
+        "subtitleFirstPart": "",
+        "subtitleSecondPart": "",
+        "mainCircleText": "",
+        "buttonText": ""
+    },
+    "analize": {
+        "title": "",
+        "itemName": "",
+        "itemDetail": ""
+    },
+    "colorgramInfo": {
+        "firstSegmentDropDown": "",
+        "secondSegmentDropDown": "",
+        "buttonReturnText": "",
+        "buttonReturnLoadText": ""
+    },
+    "profile": {
+        "title": "",
+        "subtitle": "",
+        "name": "",
+        "email": "",
+        "countOfDiagramsTekst": "",
+        "buttonText": "",
+        "modal": {
+            "title": "",
+            "content": "",
+            "firstButton": "",
+            "secondButton": ""
+        }
+    },
+    "modalAddingProps": {
+        "firstComment": "",
+        "firstPlaceholde": "",
+        "secondComment": "",
+        "secondPlaceholder": "",
+        "thirdComment": "",
+        "emotions": [],
+        "fourthComment": "",
+        "fourthFirstHeader": "",
+        "fourthSecondHeader": "",
+        "fourthButtonName": "",
+        "fifthComment": "",
+        "lastPageTitle": "",
+        "lastPageCatagory": "",
+        "lastPageProblem": "",
+        "lastPageEmotion": "",
+        "lastPageColor": "",
+        "pageFirst": "",
+        "pageSecond": "",
+        "pageThird": "",
+        "pageFourth": "",
+        "buttonChange": "",
+        "buttonConfirm": "",
+        "buttonNext": ""
+    },
+    "modalMainSegment": {
+        "firstComment": "",
+        "firstPlaceholder": "",
+        "firstButton": "",
+        "secondComment": "",
+        "secondFirstHeader": "",
+        "secondSecondHeader": "",
+        "SecondButtonConfirm": "",
+        "thirdComment": "",
+        "fourthComment": "",
+        "colorQues": "",
+        "buttonChange": "",
+        "buttonConfirm": ""
+    },
+    "modalSubmitCologram": {
+        "firstComment": "",
+        "firstFirstHeader": "",
+        "firstSecondHeader": "",
+        "firstButtonConfirm": "",
+        "secondComment": "",
+        "thirdComment": "",
+        "buttonConfirm": ""
+    },
+    "modalSubmitColor": {
+        "title": "",
+        "content": "",
+        "buttonText": ""
+    }
+}

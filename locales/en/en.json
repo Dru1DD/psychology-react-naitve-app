@@ -1,0 +1,269 @@
+{
+    "appName": "Colors of My Life",
+    "logoText": "Fedor Milikh",
+    "navigation": {
+        "mainScreen": "Main",
+        "cologram": "Cologram",
+        "analiza": "Correction",
+        "profile": "Profile"
+    },
+    "splashScreen": {
+        "title": "Express-test \"Colors of My Life\"",
+        "subTitle": "Sign In",
+        "start": "Start"
+    },
+    "signIn": {
+        "title": "Sign In",
+        "firstPlaceholder": "Your email",
+        "firstErrorMessage": "Enter the correct email format",
+        "secondLabel": "Password",
+        "secondPlaceholder": "Password",
+        "secondErrorMessage": "Password length must be more than 8",
+        "forgotPassword": "Forgot password?",
+        "buttonText": "Sign In",
+        "downText": "Do not have account?",
+        "register": "Sign Up",
+        "alertError": "Error",
+        "alertErrorText": "Check your input",
+        "alertErrorButtonText": "Ok",
+        "alertSuccess": "Sign In",
+        "alertSuccessText": "Welcome",
+        "alertSuccessButtonText": "Ok"
+    },
+    "signUp": {
+        "title": "Welcome",
+        "firstLabel": "Name",
+        "firstPlaceholder": "Name",
+        "firstErrorMessage": "Name must have more then 2 leters",
+        "secondLabel": "Email",
+        "secondPlaceholder": "Your email",
+        "secondErrorMessage": "Enter the correct email format",
+        "thirdLabel": "Password",
+        "thirdPlaceholder": "Password",
+        "thirdErrorMessage": "Password length must be more than 8",
+        "fourthLabel": "Confirm password",
+        "fourthPlaceholder": "Password",
+        "fourthErrorMessage": "Password is not similar",
+        "buttonText": "Sign Up",
+        "downText": "Do you have account?",
+        "signIn": "Sign In",
+        "alertError": "Error",
+        "alertErrorText": "Check your input",
+        "alertErrorButtonText": "Check",
+        "alertSuccess": "Sign Up",
+        "alertSuccessText": "Account has been createed",
+        "alertSuccessButttonText": "Let`s go"
+    },
+    "passwordChanger": {
+        "title": "Restore Password",
+        "firstLabel": "Email",
+        "firstPlaceholder": "Email",
+        "firstErrorMessage": "Enter the correct email format",
+        "secondLabel": "New password",
+        "secondPlaceholder": "password",
+        "secondErrorMessage": "Password length must be more than 8",
+        "thirdLabel": "Confrim Password",
+        "thirdErrorMessage": "Password",
+        "thirdPlaceholder": "Password is not similar",
+        "buttonText": "Restore password"
+    },
+    "mainScreen": {
+        "mainText": "The color test \"Colors of my life\" is a modification of the Lusher test, suggested by Doctor of Psychological Sciences Ivan Anatolyevich Ognev. Working with the text begins with conducting a psychological audit of your problem",
+        "firstParagraph": "1. Psychological audit of any life problem",
+        "firstButtonText": "View the scheme of psychological audit",
+        "secondButtonText": "An example of a psychological audit",
+        "secondParagraph": "2. Transfer of psychological audit data to the neuropsychological expert system \"Colors of my life\".",
+        "thirdParagraph": "3. The result of deciphering the psychological audit of a life problem",
+        "foursParagraph": "4. How to remove the problem from your head and reduce stress?",
+        "textBeforeAlert": "Upon decoding the psychological audit, the expert system \"Colors of my life\" immediately \"sees\" a set of colors that you need to get rid of the stress caused by the problem.",
+        "boldTextBeforeAlert": "Such a set of colors is called a color correction course and is a video file in which an individual complex of color highlights is recorded in a certain sequence. You need to watch the course for 15-20 minutes 1-2 times a day",
+        "alertText": "This app allows you to transfer your psychological audit data to the \"Colors of My Life\" neuropsychological expert system for free and buy a one-month color correction course to view on your mobile device. You can also pay for professional psychological counseling and detailed understanding of your life problem.",
+        "lastWords": "Regards to you, Todor Milykh. Master of Psychological Sciences, Clinical Psychologist"
+    },
+    "colorgram": {
+        "subtitleFirstPart": "Dear",
+        "subtitleSecondPart": " ! I hope you have successfully passed the psychological audit of your problem. Now it is time to build a color chart of your problem using the data of the psychological audit.  To do this, fill in the central circle of the color chart \"My present Me\".",
+        "mainCircleText": "My present \"Me\"",
+        "buttonText": "Confirm"
+    },
+    "analize": {
+        "title": "Your colograms",
+        "itemName": "Cologram",
+        "itemDetail": "More"
+    },
+    "colorgramInfo": {
+        "title": "How do you want to watch the color correction?",
+        "firstButton": "Fast",
+        "secondButton": "Normal",
+        "thirdButton": "Small",
+        "buttonReturnText": "Return",
+        "buttonReturnLoadText": "Return"
+    },
+    "profile": {
+        "title": "Profile",
+        "subtitle": "User info",
+        "name": "Name",
+        "email": "Email",
+        "countOfDiagramsTekst": "Count colograms",
+        "buttonText": "Exit",
+        "modal": {
+            "title": "Exit",
+            "content": "Are you sure?",
+            "firstButton": "Exit",
+            "secondButton": "Return"
+        }
+    },
+    "modalAddingProps": {
+        "firstComment": " ,please write down the area of your life that causes the most concern. Next, enter the problem closest to you from this area, select its color and determine the emotion that this problem makes you experience",
+        "firstPlaceholde": "Enter a category                                               ",
+        "secondComment": " , enter the problem closest to you, characteristic of this sphere of life. Take your time! Enter what is really important to you",
+        "secondPlaceholder": "Enter a problem                                               ",
+        "thirdComment": " , determine the emotion that this problem is experiencing you. Remember how you feel when you think about this problem...",
+        "emotions":[
+            {
+            "title": "Anger",
+            "items": [
+            "Aggression",
+            "Rage",
+            "Disgust",
+            "iNdignation",
+            "Annoyance",
+            "Cruelty",
+            "Envy",
+            "Anger",
+            "Frenzy",
+            "hYsteria",
+            "Indignation",
+            "Hatred",
+            "dislike",
+            "resentment",
+            "outrage"
+            ]
+            },
+            {
+            "title": "Fear",
+            "items": [
+            "Anxiety",
+            "guilt",
+            "Fear",
+            "Excitement",
+            "Anxiety",
+            "Confusion",
+            "shyness",
+            "fRight",
+            "Arrogance",
+            "Fear",
+            "Despair",
+            "Stupefaction",
+            "stupefaction",
+            "Trick"
+            ]
+            },
+            {
+            "title": "sAdness",
+            "items": [
+            "Hopelessness",
+            "Hopelessness",
+            "Bitterness",
+            "Helplessness",
+            "heartache",
+            "Plaintiveness",
+            "Pity",
+            "Hunted",
+            "Thoughtfulness",
+            "Laziness",
+            "Detachment",
+            "Despair",
+            "Alienation",
+            "sAdness",
+            "Loss"
+            ]
+            },
+            {
+            "title": "Joy",
+            "items": [
+            "Faith",
+            "Fun",
+            "Excitement",
+            "Delight",
+            "Fun",
+            "cOncern",
+            "Amazement",
+            "iNterest",
+            "eXultation",
+            "Curiosity",
+            "Hope",
+            "Impatience",
+            "Revival",
+            "Expectation",
+            "Liberation"
+            ]
+            },
+            {
+            "title": "Love",
+            "items": [
+            "security",
+            "Bliss",
+            "Gratitude",
+            "Mutual assistance",
+            "Attraction",
+            "Love",
+            "Admiration",
+            "Pride",
+            "kIndness",
+            "Trust",
+            "Friendliness",
+            "Identity",
+            "Sincerity",
+            "Self-love",
+            "Tenderness"
+            ]
+            }
+            ],
+        "fourthComment": " , what color is associated with this problem",
+        "fourthFirstHeader": "Standart color",
+        "fourthSecondHeader": "Custom Color",
+        "fourthButtonName": " Confirm",
+        "fifthComment": ", now choose a shade of this color",
+        "lastPageTitle": "Confirm",
+        "lastPageCatagory": "Catagory",
+        "lastPageProblem": "Problem",
+        "lastPageEmotion": "Emotion",
+        "lastPageColor": "Color",
+        "pageFirst": "Caragory",
+        "pageSecond": "Problem",
+        "pageThird": "Emotion",
+        "pageFourth": "Color",
+        "buttonChange": "Change",
+        "buttonConfirm": "Confirm",
+        "buttonNext": "Next"
+    },
+    "modalMainSegment": {
+        "firstComment": " , enter a problem from your life that you are struggling with",
+        "firstPlaceholder": "Enter a problem                                               ",
+        "firstButton": "Confirm",
+        "secondComment": " ,what color would you depict your own \"I\" or your current state? Please fill in the central circle of your color chart with this color",
+        "secondFirstHeader": "Standart colors",
+        "secondSecondHeader": "Custom color",
+        "SecondButtonConfirm": "Confirm",
+        "thirdComment": " , now choose a shade of this color",
+        "fourthComment": " , check again the color you have chosen",
+        "colorQues": "Your color: ",
+        "buttonChange": "Change",
+        "buttonConfirm": "Confirm"
+    },
+    "modalSubmitCologram": {
+        "firstComment": ", choose the color of your state of mind, if this problem did not exist or it would have already been resolved!",
+        "firstFirstHeader": "Standart colors",
+        "firstSecondHeader": "Custom color",
+        "firstButtonConfirm": "Confirm",
+        "secondComment": " , now choose a shade of this color",
+        "thirdComment": "All sectors of the color chart are full!  Now you can buy a personal color correction module! Daily viewing the color correction will relieve the stress of your problem! By returning to a calm state of mind, you will easily and quickly find the most correct solution for this problem!",
+        "buttonConfirm": "Go to purchase a course"
+    },
+    "modalSubmitColor": {
+        "title": "Congratulation",
+        "content": "Finish your correction module",
+        "buttonText": "Good job"
+    }
+}

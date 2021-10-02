@@ -1,15 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
 
-import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
-import MainScreen from '../MainScreen'
+import MainScreenStack from '../stack/MainScreenRoot'
 import Colorgram from '../Colorgram'
-import AnalizeColorgram from '../AnalizeCologram'
 import Profile from '../Profile'
+import AnalizeCologramsStack from '../stack/AnalizeCologramsStack'
 
 import { Ionicons } from '@expo/vector-icons'
+import MainScreen from '../MainScreen'
+// Обычный таб навигатор 
 
 const Tab = createBottomTabNavigator()
 
@@ -20,8 +21,8 @@ function RootTabScreen () {
              <Tab.Navigator 
                  screenOptions={({ route }) => ({
                      headerShown: false,
-                     
-                     tabBarIcon: ({ focused, color, size }) => {
+                     tabBarActiveTintColor: "red",
+                     tabBarIcon: ({ focused, size }) => {
                          let iconName
                          if (route.name === "Главная") {
                              iconName = focused 
@@ -31,7 +32,7 @@ function RootTabScreen () {
                              iconName = focused 
                                          ? 'apps'
                                          : 'apps-outline'
-                         } else if ( route.name === "Аналитика") {
+                         } else if ( route.name === "Коррекция") {
                              iconName = focused 
                                          ? 'analytics'
                                          : 'analytics-outline'
@@ -40,13 +41,13 @@ function RootTabScreen () {
                                          ? 'person'
                                          : 'person-outline'
                          }
-                         return <Ionicons name={iconName} siez={size} color={color} />
+                         return <Ionicons name={iconName} size={size} color={"red"} />
                      }
                  })} 
                  >
-                     <Tab.Screen name="Главная"  component={MainScreen} />
+                     <Tab.Screen name="Главная"  component={MainScreenStack} />
                      <Tab.Screen name="Цветограм" component={Colorgram} />
-                     <Tab.Screen name="Аналитика" component={AnalizeColorgram} />
+                     <Tab.Screen name="Коррекция" component={AnalizeCologramsStack} />
                      <Tab.Screen name="Профиль" component={Profile} />
                  </Tab.Navigator>
         </>
